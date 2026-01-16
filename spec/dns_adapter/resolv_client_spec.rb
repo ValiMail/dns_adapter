@@ -4,8 +4,9 @@ describe DNSAdapter::ResolvClient do
   subject(:client) { described_class.new }
 
   let(:mock_resolver) { instance_double(Resolv::DNS) }
+
   before do
-    expect(Resolv::DNS).to receive(:new).and_return(mock_resolver)
+    allow(Resolv::DNS).to receive(:new).and_return(mock_resolver)
   end
 
   describe '#fetch_a_records' do

@@ -3,6 +3,18 @@ require 'dns_adapter/error'
 module DNSAdapter
   # A mock client for use in tests.
   class MockClient
+    RECORD_TYPE_TO_ATTR_NAME_MAP = {
+      'A' => :address,
+      'AAAA' => :address,
+      'MX' => :exchange,
+      'PTR' => :name,
+      'NS' => :name,
+      'CNAME' => :name,
+      'SPF' => :text,
+      'TXT' => :text
+    }.freeze
+    TIMEOUT = 'TIMEOUT'.freeze
+
     def initialize(zone_data)
       @zone_data = {}
       zone_data.each do |k, v|
@@ -69,24 +81,12 @@ module DNSAdapter
       end
     end
 
-    TIMEOUT = 'TIMEOUT'.freeze
     def check_for_timeout(domain)
       record_set = find_records_for_domain(domain)
-      return [] if record_set.select { |r| r == TIMEOUT }.empty?
+      return [] if record_set.none? { |r| r == TIMEOUT }
 
       raise DNSAdapter::TimeoutError
     end
-
-    RECORD_TYPE_TO_ATTR_NAME_MAP = {
-      'A' => :address,
-      'AAAA' => :address,
-      'MX' => :exchange,
-      'PTR' => :name,
-      'NS' => :name,
-      'CNAME' => :name,
-      'SPF' => :text,
-      'TXT' => :text
-    }.freeze
 
     def formatted_records(records, type)
       records.map do |r|

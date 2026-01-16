@@ -7,6 +7,8 @@ module DNSAdapter
   # Record types supported:
   SUPPORTED_RR_TYPES = %w[A AAAA MX PTR TXT SPF NS CNAME].freeze
 
+  TRAILING_DOT_REGEXP = /\.\z/
+
   class ResolvClient
     def fetch_a_records(domain)
       fetch_a_type_records(domain, 'A')
@@ -93,9 +95,9 @@ module DNSAdapter
       end
     end
 
-    def fetch_records(domain, type, &block)
+    def fetch_records(domain, type, &)
       records = dns_lookup(domain, type)
-      records.map(&block)
+      records.map(&)
     end
 
     def dns_lookup(domain, rr_type)
@@ -110,7 +112,6 @@ module DNSAdapter
       resources
     end
 
-    TRAILING_DOT_REGEXP = /\.\z/.freeze
     def normalize_domain(domain)
       (domain.sub(TRAILING_DOT_REGEXP, '') || domain).downcase
     end
