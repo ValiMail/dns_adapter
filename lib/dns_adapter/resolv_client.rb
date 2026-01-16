@@ -3,6 +3,10 @@ require 'resolv/dns/resource/in/spf'
 
 module DNSAdapter
   # An adapter client for the internal Resolv DNS client.
+  #
+  # Record types supported:
+  SUPPORTED_RR_TYPES = %w[A AAAA MX PTR TXT SPF NS CNAME].freeze
+
   class ResolvClient
     def fetch_a_records(domain)
       fetch_a_type_records(domain, 'A')
@@ -47,7 +51,6 @@ module DNSAdapter
       dns_resolver.timeouts = timeouts
     end
 
-    SUPPORTED_RR_TYPES = %w[A AAAA MX PTR TXT SPF NS CNAME].freeze
     def self.type_class(rr_type)
       raise ArgumentError, "Unknown RR type: #{rr_type}" unless SUPPORTED_RR_TYPES.include?(rr_type)
 
@@ -95,11 +98,6 @@ module DNSAdapter
       records.map(&block)
     end
 
-    TRAILING_DOT_REGEXP = /\.\z/.freeze
-    def normalize_domain(domain)
-      (domain.sub(TRAILING_DOT_REGEXP, '') || domain).downcase
-    end
-
     def dns_lookup(domain, rr_type)
       domain = normalize_domain(domain)
       resources = getresources(domain, rr_type)
@@ -110,6 +108,11 @@ module DNSAdapter
       end
 
       resources
+    end
+
+    TRAILING_DOT_REGEXP = /\.\z/.freeze
+    def normalize_domain(domain)
+      (domain.sub(TRAILING_DOT_REGEXP, '') || domain).downcase
     end
 
     def getresources(domain, rr_type)
