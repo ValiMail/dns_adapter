@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'dns_adapter/resolv_ns_client'
 
 describe 'DNSAdapter' do
   shared_examples 'a ResolvClient' do |klass|
