@@ -61,23 +61,27 @@ module DNSAdapter
       return nil if type == 'CNAME' # Never follow CNAME for a CNAME query
 
       cname_record = formatted_records(records_for_type(record_set, 'CNAME'), 'CNAME').first
-      cname_target = cname_record.try(:[], :name)
-      cname_target.present? ? raw_records(cname_target, type) : nil
+      cname_target = cname_record&.[](:name)
+      blank?(cname_target) ? nil : raw_records(cname_target, type)
     end
 
     private
 
     def normalize_domain(domain)
-      return if domain.blank?
+      return if blank?(domain)
 
       domain = domain[0...-1] if domain[-1] == '.'
       domain.downcase
     end
 
     def find_records_for_domain(domain)
-      return [] if domain.blank?
+      return [] if blank?(domain)
 
       @zone_data[normalize_domain(domain)] || []
+    end
+
+    def blank?(value)
+      value.nil? || value.empty?
     end
 
     def records_for_type(record_set, type)

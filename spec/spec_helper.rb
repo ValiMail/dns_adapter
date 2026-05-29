@@ -5,7 +5,11 @@ if ENV['CODECOV_TOKEN']
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
 
-SimpleCov.start
+SimpleCov.start do
+  enable_coverage :branch
+  track_files 'lib/**/*.rb'
+  add_filter '/spec/'
+end
 
 require 'dns_adapter'
 
