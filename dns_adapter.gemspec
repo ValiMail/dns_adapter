@@ -2,6 +2,24 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'dns_adapter/version'
 
+files =
+  if File.directory?(File.join(__dir__, '.git'))
+    IO.popen(['git', '-C', __dir__, 'ls-files', '-z'], &:read).split("\x0")
+  else
+    Dir.chdir(__dir__) do
+      Dir[
+        'Changelog.md',
+        'Gemfile',
+        'LICENSE',
+        'README.md',
+        'Rakefile',
+        'dns_adapter.gemspec',
+        'lib/**/*.rb',
+        'spec/**/*.rb'
+      ]
+    end
+  end
+
 Gem::Specification.new do |spec|
   spec.name          = 'dns_adapter'
   spec.version       = DNSAdapter::VERSION
@@ -12,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/ValiMail/dns_adapter'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0").select { |file| File.file?(file) }
+  spec.files         = files.select { |file| File.file?(File.join(__dir__, file)) }
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'

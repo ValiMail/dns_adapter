@@ -1,0 +1,16 @@
+services:
+  test:
+    build:
+      context: .
+      args:
+        RUBY_VERSION: ${DNS_ADAPTER_RUBY_VERSION:-3.3}
+    image: dns_adapter-test:ruby-${DNS_ADAPTER_RUBY_VERSION:-3.3}
+    working_dir: /app
+    volumes:
+      - .:/app
+      - bundle:/bundle
+    command: sh -lc "(bundle check || bundle install) && bundle exec rspec"
+
+volumes:
+  bundle:
+    name: dns_adapter_bundle_ruby_${DNS_ADAPTER_RUBY_VERSION:-3.3}
