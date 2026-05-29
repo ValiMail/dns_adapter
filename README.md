@@ -19,7 +19,7 @@ Supported versions
 To get the latest updates from this repository, add the gem to your application's Gemfile:
 
 ```ruby
-gem 'dns_adapter', github: 'ValiMail/coppertone', branch: 'master'
+gem 'dns_adapter', github: 'ValiMail/dns_adapter', branch: 'master'
 ```
 
 The latest version is no longer published to [RubyGems](https://rubygems.org/).
