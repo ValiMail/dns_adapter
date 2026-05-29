@@ -4,3 +4,5 @@
 * Support to Ruby 4.0
 * CI migrated from Circle to Github
 * Adding Changelog.md
+# README review
+* Review on project specs

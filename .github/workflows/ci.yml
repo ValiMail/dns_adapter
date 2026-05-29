@@ -43,6 +43,14 @@ jobs:
           path: tmp/test-results/rspec/results.xml
           if-no-files-found: ignore
 
+      - name: Upload SimpleCov HTML coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: simplecov-html-ruby-${{ matrix.ruby-version }}
+          path: coverage/
+          if-no-files-found: ignore
+
       - name: Report code coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
