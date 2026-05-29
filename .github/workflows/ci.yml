@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    name: Test / Ruby 3.3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Run test suite
+        run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/test-results/rspec/results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rspec-results-ruby-3.3
+          path: tmp/test-results/rspec/results.xml
+          if-no-files-found: ignore
+
+      - name: Report code coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage/.resultset.json
+          format: simplecov
+          flag-name: ruby-3.3
+          parallel: true
+
+      - name: Build gem
+        run: bundle exec rake build
+
+  finish-coverage:
+    name: Finish Coveralls
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+
+    steps:
+      - name: Inform Coveralls that parallel jobs are all done
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          carryforward: ruby-3.3
+
+  lint:
+    name: Lint and Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Lint Ruby
+        run: bundle exec rubocop
+
+      - name: Scan for Ruby gem vulnerabilities
+        run: |
+          gem install bundler-audit
+          bundle audit check --update
+
+      - name: Scan for Ruby and RubyGems vulnerabilities
+        run: |
+          bundle add ruby_audit --group "test"
+          bundle exec ruby-audit check

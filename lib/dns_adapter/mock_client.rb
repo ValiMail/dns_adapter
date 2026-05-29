@@ -65,7 +65,7 @@ module DNSAdapter
     def normalize_domain(domain)
       return if domain.blank?
 
-      domain = domain[0...-1] if domain[domain.length - 1] == '.'
+      domain = domain[0...-1] if domain[-1] == '.'
       domain.downcase
     end
 
