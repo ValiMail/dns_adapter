@@ -9,6 +9,11 @@ An adapter layer for DNS queries that makes it simple to swap in different DNS p
 
 DNSAdapter supports Ruby 3.3 and newer.
 
+Supported versions
+- 3.3
+- 3.4
+- 4.0
+
 ## Installation
 
 To get the latest updates from this repository, add the gem to your application's Gemfile:
