@@ -1,6 +1,6 @@
 require 'simplecov'
 
-if ENV['CI'] == 'true'
+if ENV['CODECOV_TOKEN']
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
