@@ -1,7 +1,12 @@
 require 'dns_adapter/error'
 
 module DNSAdapter
-  # A mock client for use in tests.
+  # Test double for DNS clients that resolves records from an in-memory zone.
+  #
+  # We can seed this client with a hash of domain names to record hashes
+  # and use it anywhere a DNSAdapter client is expected. It mirrors the client
+  # fetch API closely enough for tests, including CNAME following and the
+  # TIMEOUT sentinel, while keeping network behavior fully deterministic.
   class MockClient
     RECORD_TYPE_TO_ATTR_NAME_MAP = {
       'A' => :address,
