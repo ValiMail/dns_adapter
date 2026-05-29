@@ -2,7 +2,10 @@ require 'simplecov'
 
 if ENV['CODECOV_TOKEN']
   require 'codecov'
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::Codecov
+  ]
 end
 
 SimpleCov.start do
